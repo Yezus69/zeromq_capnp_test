@@ -1,0 +1,35 @@
+import os
+#import scons_compiledb
+
+zmq_include = Dir('../../libzmq/include')
+zmq_lib = Dir('../../libzmq/build/lib/Release')
+
+cpppath = [zmq_include]
+libpath = [zmq_lib]
+
+libpath = [
+  '/opt/homebrew/lib',
+]
+cpppath = [
+  '/opt/homebrew/include',
+  '/opt/homebrew/include/opencv4'
+]
+env = Environment(
+    ENV=os.environ,
+    CPPPATH=cpppath,
+    LIBPATH=libpath,
+    CXXFLAGS="-std=c++1z",
+)
+env.ParseConfig("pkg-config --cflags --libs opencv4")
+env.Tool('compilation_db')
+libs = env['LIBS']
+libs.append(['zmq','capnp','kj'])
+t = env.Program('server', 'server.cpp', LIBS=libs)#['libzmq-v142-mt-s-4_3_5','libzmq-v142-mt-4_3_5','wsock32','ws2_32','Crypt32','iphlpapi','Advapi32'])
+env.CompilationDatabase()
+
+#env.MSVSProject(target='server' + env['MSVSPROJECTSUFFIX'],
+#                srcs=['server.cpp'],
+#                 buildtarget = t,
+#                 runfile=t,
+#                variant='Debug')
+#

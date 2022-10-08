@@ -1,0 +1,51 @@
+import os
+zmq_include = Dir('../../libzmq/include')
+zmq_lib = Dir('../../libzmq/build/lib/Release')
+
+libpath = [
+  '/opt/homebrew/lib',
+]
+cpppath = [
+  '/opt/homebrew/include',
+  '/opt/homebrew/include/opencv4'
+]
+#cpppath = [zmq_include]
+#libpath = [zmq_lib]
+
+env = Environment(
+    ENV=os.environ,
+    CC='gcc',
+    CXX='g++',
+    CXXFLAGS="-std=c++1z",
+    
+    CPPPATH=cpppath,
+    LIBPATH=libpath,
+    #CPPDEFINES = ['ZMQ_STATIC'],
+    #LINKFLAGS = ['/DEBUG'],
+    #CCPDBFLAGS='/Zi /Fd${TARGET}.pdb'
+)
+
+#x=env.MergeFlags(['!pkg-config --libs --cflags /opt/homebrew/lib/pkgconfig/opencv4.pc'])
+print("TEST")
+
+env.ParseConfig("pkg-config --cflags --libs opencv4")
+#print(x)
+print (env['CPPPATH'])
+env.Tool('compilation_db')
+print ("+++++++++++++++++++++++++++++++++++++++++++")
+libs = env['LIBS']
+libs.append(['zmq','capnp','kj'])
+t = env.Program('client', 'client.cpp', LIBS=libs)#'libzmq-v142-mt-4_3_5','wsock32','ws2_32','Crypt32','iphlpapi','Advapi32'])
+env.CompilationDatabase()
+print (libs)
+#env.MSVSProject(target='client' + env['MSVSPROJECTSUFFIX'],
+#                srcs=['client.cpp'],
+#                 buildtarget = t,
+#                 runfile=,t
+#                variant='Debug')
+
+
+
+
+
+
